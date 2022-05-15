@@ -1,0 +1,56 @@
+-215 -440 208 -556
+2
+120 134
+-767 -324
+
+161 -364 -42 592
+5
+473 -194
+677 -907
+785 907
+-510 556
+-185 15
+
+2
+abandon
+abnormal
+
+6
+abandon
+abnormal
+algorithm
+attitude
+latitude
+altitude
+
+7
+into
+hint
+mint
+point
+paint
+internet
+intuition
+
+8
+ainterneta
+ainternetb
+internetac
+cainternet
+bainternet
+internetf
+internetgq
+internetagq
+
+
+7
+1 5 2 2 1 4 2
+
+4
+2 1 2 1
+
+6
+2 2 1 1 2 2
+
+10    
+10 8 8 8 7 6 5 4 3 8

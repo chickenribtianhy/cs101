@@ -1,0 +1,407 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[shortlabels]{enumitem}
+\usepackage{tikz}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{epsfig} %% for loading postscript figures
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{subfigure}
+\usepackage{graphics}
+\usepackage{titlesec}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{indentfirst}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\renewcommand{\baselinestretch}{1.2}%Adjust Line Spacing
+%\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}% Adjust Margins of the File
+\usepackage{tikz-qtree}
+\usetikzlibrary{graphs}
+\tikzset{every tree node/.style={minimum width=2em,draw,circle},
+	blank/.style={draw=none},
+	edge from parent/.style=
+	{draw,edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}},
+	level distance=1.2cm}
+\setlength{\parindent}{0pt}
+%\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+\newcommand\question[2]{\vspace{.25in}\hrule\textbf{#1: #2}\vspace{.5em}\hrule\vspace{.10in}}
+\renewcommand\part[1]{\vspace{.10in}\textbf{(#1)}}
+%\newcommand\algorithm{\vspace{.10in}\textbf{Algorithm: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+\pagestyle{fancyplain}
+% Create horizontal rule command with an argument of height
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}}
+
+
+
+% Set the title here
+\title{
+	\normalfont \normalsize
+	\textsc{ShanghaiTech University} \\ [25pt]
+	\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+	\huge CS101 Algorithms and Data Structures\\ % The assignment title
+	\LARGE Fall 2021\\
+	\LARGE Homework 2\\
+	\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+% wrong usage of \author, never mind
+\author{}
+\date{Due date: 23:59, October 10, 2021}
+
+% set the header and footer
+\pagestyle{fancy}
+\lhead{CS101 Algorithms and Data Structures}
+\chead{Homework 2}
+\rhead{Due date: 23:59, October 10, 2021}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\newtheorem{Q}{Question}
+% special settings for the first page
+\fancypagestyle{firstpage}
+{
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyhf{}
+	\fancyfoot[C]{\thepage}
+}
+
+% Add the support for auto numbering
+% use \problem{title} or \problem[number]{title} to add a new problem
+% also \subproblem is supported, just use it like \subsection
+\newcounter{ProblemCounter}
+\newcounter{oldvalue}
+\newcommand{\problem}[2][-1]{
+	\setcounter{oldvalue}{\value{secnumdepth}}
+	\setcounter{secnumdepth}{0}
+	\ifnum#1>-1
+	\setcounter{ProblemCounter}{0}
+	\else
+	\stepcounter{ProblemCounter}
+	\fi
+	\section{Problem \arabic{ProblemCounter}: #2}
+	\setcounter{secnumdepth}{\value{oldvalue}}
+}
+\newcommand{\subproblem}[1]{
+	\setcounter{oldvalue}{\value{section}}
+	\setcounter{section}{\value{ProblemCounter}}
+	\subsection{#1}
+	\setcounter{section}{\value{oldvalue}}
+}
+
+% \setmonofont{Consolas}
+\definecolor{blve}{rgb}{0.3372549 , 0.61176471, 0.83921569}
+\definecolor{gr33n}{rgb}{0.29019608, 0.7372549 , 0.64705882}
+\makeatletter
+\lst@InstallKeywords k{class}{classstyle}\slshape{classstyle}{}ld
+\makeatother
+\lstset{language=C++,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blve}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{magenta}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	classstyle = \bfseries\color{gr33n}, 
+	tabsize=4
+}
+\lstset{basicstyle=\ttfamily}
+\begin{document}
+
+\maketitle
+\thispagestyle{firstpage}
+%\newpage
+\vspace{3ex}
+
+\begin{enumerate}
+	\item Please write your solutions in English.
+
+	\item Submit your solutions to gradescope.com.
+
+	\item Set your FULL NAME to your Chinese name and your STUDENT ID correctly in Account Settings.
+
+	\item If you want to submit a handwritten version, scan it clearly. Camscanner is recommended.
+
+	\item When submitting, match your solutions to the according problem numbers correctly.
+
+	\item No late submission will be accepted.
+
+	\item Violations to any of the above may result in zero grade.
+\end{enumerate}
+\newpage
+
+\question{1}{(2'+1'+2'+2'+2') Hash Collisions}
+Consider a hash table consisting of $M= 11$ slots, and suppose we want to insert integer keys $A = [43, 23, 1 , 0,15 ,31 ,4 ,7 ,11 ,3]$ orderly into the table. We give the hash function $h1()$ in the form of pseudocode as below:
+
+\hrulefill
+\rm{
+	\begin{lstlisting}[language=C++]
+int h1(int key) {
+	int x = (key + 7) * (key + 7);
+	x = x / 16;
+	x = x + key;
+	x = x % 11;
+	return x;
+}
+\end{lstlisting}
+}
+\hrulefill
+
+\begin{Q} Suppose that collisions are resolved via chaining. If there exists collision when inserting a key, the inserted key(collision) is stored at the end of a chain. In the table below is the hash table implemented by array. Insert all the keys into the table below. If there exists a chain, please use $\rightarrow$
+	to represent a link between two keys.
+	\begin{table}[ht]
+		\begin{tabular}{|l|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+			\hline
+			Index & 0                & 1                 & 2  & 3 & 4 & 5 & 6 & 7 & 8 & 9                & 10 \\ \hline
+			Keys  & 31$\rightarrow$4 & 43$\rightarrow$15 & 23 & 0 &   & 1 &   &   & 7 & 11$\rightarrow$3 &    \\ \hline
+		\end{tabular}
+	\end{table}
+\end{Q}
+
+\begin{Q}
+	What is the load factor $\lambda$?
+
+	$\lambda = 10/11 = 0.909$
+	\vspace{2cm}
+\end{Q}
+
+\begin{Q}
+	Suppose that collisions are resolved via linear probing. The integer key values listed below are to
+	be inserted, in the order given. Show the home slot (the slot to which the key hashes, before any probing), the
+	probe sequence (do not need to write the home slot again) for each key, and the final contents of the hash table after the following key values have been inserted in the given order:
+	\begin{table}[ht]
+		\begin{tabular}{|p{1.7cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+			\hline
+			\textbf{Key Value}      & 43 & 23 & 1 & 0 & 15    & 31 & 4                  & 7 & 11 & 3  \\ \hline
+			\textbf{Home Slot}      & 1  & 2  & 5 & 3 & 1     & 0  & 0                  & 8 & 9  & 9  \\ \hline
+			\textbf{Probe Sequence} &    &    &   &   & 2,3,4 &    & \tiny{1,2,3,4,5,6} &   &    & 10 \\ \hline
+		\end{tabular}
+	\end{table}
+	\pagebreak
+
+	\textbf{Final Hash Table:}
+	\begin{table}[ht]
+		\begin{tabular}{|l|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+			\hline
+			Index & 0  & 1  & 2  & 3 & 4  & 5 & 6 & 7 & 8 & 9  & 10 \\ \hline
+			Keys  & 31 & 43 & 23 & 0 & 15 & 1 & 4 &   & 7 & 11 & 3  \\ \hline
+		\end{tabular}
+	\end{table}
+\end{Q}
+
+
+\begin{Q}
+	Suppose that collisions are resolved via a kind of quadratic probing, with the probe function as below:
+	$$(k^2+k)/2$$
+	This means that if the key is hashed to the $i$-th slot, we will check the $(i+(k^2+k)/2)$-th slot for the $k$-th probing. Show the home slot (the slot to which the key hashes, before any probing), the probe sequence (do not need to write the home slot again) for each key, and the final contents of the hash table after the following key values have been inserted in the given order:
+	\begin{table}[ht]
+		\begin{tabular}{|p{1.7cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+			\hline
+			\textbf{Key Value}      & 43 & 23 & 1 & 0 & 15  & 31 & 4     & 7 & 11 & 3  \\ \hline
+			\textbf{Home Slot}      & 1  & 2  & 5 & 3 & 1   & 0  & 0     & 8 & 9  & 9  \\ \hline
+			\textbf{Probe Sequence} &    &    &   &   & 2,4 &    & 1,3,6 &   &    & 10 \\ \hline
+		\end{tabular}
+	\end{table}
+
+	\textbf{Final Hash Table:}
+	\begin{table}[ht]
+		\begin{tabular}{|l|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+			\hline
+			Index & 0  & 1  & 2  & 3 & 4  & 5 & 6 & 7 & 8 & 9  & 10 \\ \hline
+			Keys  & 31 & 43 & 23 & 0 & 15 & 1 & 4 &   & 7 & 11 & 3  \\ \hline
+		\end{tabular}
+	\end{table}
+\end{Q}
+
+\begin{Q}
+	Suppose that we are using a hash table with m slots, where $m>1$. Recall that in open addressing we store an element in the first empty slot among $A_0(k),A_1(k),\cdots,A_{m-1}(k)$. In this problem,
+	$$A_i(k)=(h(k)+i^2+i)~mod~m$$
+	where h(k) is some hash function.\\
+	Prove that the probe sequence will always include at most (m+1)/2 distinct slots.
+
+	\textbf{Solution}
+
+	\textbf{Case One:} If m is an even number.
+
+	Since $i^2+i=i(i+1)$, we know that $i^2+i$ is an even number. And since the result of an even number mod an even number, namely $(i^2+i)~mod~m$,
+	can only be an even number which is less than m and greater than 0. Therefore, there are just $m/2$ possible results for $(i^2+i)~mod~m$, as well as for $(h(k)+i^2+i)~mod~m$, as $h(k)~mod~m$ is a definite number.
+
+	So, the probe sequence will always include at most m/2 distinct slots if m is an even number.
+
+	\textbf{Case Two:} If m is an odd number.
+
+	I would take the number in the from 0 to m-1, which should be (m-1)/2. Then, I would like to prove that $(i^2+i)~mod~m$ for each i, where $0\leq i\leq m-1$, are symmetric about $i=\frac{m-1}{2}$.
+
+	Consider $i_1=\frac{m-1}{2}+j$, and $i_2=\frac{m-1}{2}-j$, where $1\leq j\leq \frac{m-1}{2}$.
+
+	$i_1^2+i_1=\frac{(m-1)^2}{4}+(m-1)j+j^2+\frac{m-1}{2}+j=\frac{(m-1)^2}{4}+mj+j^2$\\
+	$i_2^2+i_2=\frac{(m-1)^2}{4}-(m-1)j+j^2+\frac{m-1}{2}-j=\frac{(m-1)^2}{4}+mj+j^2$
+
+	Obviously they are equal, so are $(i_1^2+i_1)~mod~m$ and $(i_2^2+i_2)~mod~m$.\\
+	Therefore, $(i^2+i)~mod~m$ for each i, where $0\leq i\leq m-1$, are symmetric about $i=\frac{m-1}{2}$, as proved.
+
+	Because of that conclusion about symmetry, the probe sequence will always include at most (m+1)/2 distinct slots if m is an odd number.
+	
+	\medskip
+	\textbf{To sum up}, the probe sequence will always include at most (m+1)/2 distinct slots.
+
+
+\end{Q}
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\question{2}{(3*1'+4'+4')Insertion Sort and Bubble Sort}
+
+
+The \textbf{question6-8} are multiple-choice questions, each question has one or more correct answer(s). Select all the correct answer(s). For each question, you get $0$ point if you select one or more wrong answers, but you get $0.5$ point if you select a non-empty subset of the correct answers.\\
+\textit{Note that you should write you answers of \textbf{question6-8} in the table below.}
+\begin{table}[htbp]
+	\begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|}
+		\hline
+		Question 6 & Question 7 & Question 8 \\
+		\hline
+		ABC        & AB         & ABC        \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{Q}
+	In the lecture we have learnt that different sorting algorithms are suitable for different scenarios. Then which of the following options is/are suitable for insertion sort?
+	\begin{enumerate}[(A)]
+		\item Each element of the array is close to its final sorted position.
+		\item A big sorted array concatenated with a small sorted array
+		\item An array where only few elements are not in its final sorted position.
+		\item None of the above.
+	\end{enumerate}
+\end{Q}
+
+\begin{Q}
+	Applying insertion sort and the most basic bubble sort without a flag respectively on the same array, for both algorithms, which of the following statements is/are true? (simply assume we are using swapping for insertion sort)
+	\begin{enumerate}[(A)]
+		\item There are two for-loops, which are nested within each other.
+		\item They need the same amount of swaps.
+		\item They need the same amount of element comparisons.
+		\item None of the above.
+	\end{enumerate}
+\end{Q}
+
+\begin{Q}
+	The time complexity for both insertion sort and bubble sort will be the same if: (assume bubble sort is flagged bubble sort)
+	\begin{enumerate}[(A)]
+		\item the input array is already sorted.
+		\item the input array is reversely sorted.
+		\item the input array is a list containing n copies of the same number.
+		\item None of the above.
+	\end{enumerate}
+\end{Q}
+\vspace{6cm}
+\begin{Q}\textbf{(4')Insertion Sort using Linked List}\\
+	In the lecture, we have learnt the insertion sort implementation using array. In this question, you are required to implement insertion sort using single linked list. Since it is not easy to traverse single linked list from back to front, we can traverse from front to back instead if it is needed.
+
+	Fill in the blanks to complete the algorithm. Please note that there is at most one statement (ended with ;) in each blank line.
+
+	\hrulefill
+	\rm{
+		\begin{lstlisting}[language=C++]
+struct ListNode 
+{
+    int val;
+ 	ListNode *next;
+ 	ListNode(int x) : val(x), next(nullptr) {}
+ };
+
+ListNode* insertionSort(ListNode* head) {
+    //if linked list is empty or only contains 1 element, return directly
+    if(!head || !(head->next)){return head;}
+    //create dummy node
+    ListNode *dummy = new ListNode(-1);
+    dummy->next = head;
+    //split linked list into sorted list and unsorted list
+    ListNode *tail = head;//tail of sorted list
+    ListNode *sort = head->next;//head of unsorted list
+    //insertion sort
+    while(sort)
+    {
+        if(sort->val < tail->val)
+        {
+            ListNode *ptr = dummy;
+            while(ptr->next->val < sort->val) ptr = ptr->next;
+            tail->next = sort->next; ___________________________
+            sort->next = ptr->next;___________________________
+            ptr->next = sort;___________________________
+            sort = tail->next;___________________________
+        }
+        else
+        {	
+            tail = tail->next;
+            sort = sort->next;
+        }
+    }
+    ListNode *ans = dummy->next;
+    delete dummy; dummy = nullptr;
+    return ans;
+}
+\end{lstlisting}
+	}
+	\vspace{1cm}
+\end{Q}
+
+\begin{Q}\textbf{(4')Reverse Engineering}\\
+	Consider the following unsorted array, where each letter represents an unknown value, and the array after an unknown number of iterations of selection sort whose implementation is given below. Assume no two elements are equal and we want them sorted in an ascending order.
+
+	\hrulefill
+	\rm{
+		\begin{lstlisting}[language=C++]
+#include<iostream>
+using namespace std;
+template<class T>
+void selection(T data[], int n){
+	for(int i=0,j,least;i<n-1;i++){
+		for(j=i+1,least=i;j<n;j++){
+			if(data[j]<data[least])
+				least=j;
+		}
+		swap(data[least],data[i]);
+	}
+}
+\end{lstlisting}
+	}
+
+	\vspace{1cm}
+	Unsorted:\\
+	A,B,C,D,E,F,G,H\\
+
+
+	After ? Iteration of Selection Sort:\\
+	F,H,C,D,A,E,G,B\\
+
+
+	For each relation below, write \textless, \textgreater, or ? for insufficient information regarding the relation between the two objects.\\
+
+	\begin{center}
+		G \underline{\hbox to 20mm{\textgreater}} F\\
+
+		G \underline{\hbox to 20mm{\textgreater}} A\\
+
+		G \underline{\hbox to 20mm{?}} B\\
+
+		G \underline{\hbox to 20mm{?}} E\\
+	\end{center}
+
+
+
+
+\end{Q}
+
+
+
+\pagebreak
+
+\end{document}
