@@ -1,7 +1,7 @@
 # cs101
 Personal log for assignments in Algorithm &amp; Data Structure, cs101, Shanghaitech.
 
-All programming assignments, with drafts and failure trials, as well as several writing assignments.
+All programming assignments, with drafts and failed attempts, as well as several writing assignments.
 
 Just to record.
 
